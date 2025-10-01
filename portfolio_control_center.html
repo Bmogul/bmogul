@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Control Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-secondary: #1a1e24;
+            --bg-tertiary: #252a31;
+            --border-color: #3a3f46;
+            --text-primary: #ffffff;
+            --text-secondary: #98bfad;
+            --accent-blue: #7eb8da;
+            --accent-purple: #be9ddf;
+            --accent-pink: #ffa5d8;
+            --hover-bg: #1e3a4a;
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #e8ecf1;
+            --bg-tertiary: #d5dce5;
+            --border-color: #b8c2cc;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a8270;
+            --accent-blue: #5a9ab8;
+            --accent-purple: #9c7dbd;
+            --accent-pink: #d683b6;
+            --hover-bg: #c9dae8;
+        }
+
+        body {
+            font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.4;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Main Layout Container */
+        .control-center {
+            display: grid;
+            grid-template-columns: var(--sidebar-width, 250px) 1fr;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            max-width: 100%;
+            transition: grid-template-columns 0.3s ease;
+        }
+
+        .control-center.sidebar-collapsed {
+            --sidebar-width: 60px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            grid-column: 1 / -1;
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            width: 35px;
+            height: 35px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-blue);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .menu-toggle:hover {
+            background: var(--hover-bg);
+            border-color: var(--accent-blue);
+        }
+
+        .terminal-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--accent-blue);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .main-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .top-bar-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 35px;
+            height: 35px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-pink);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .theme-toggle:hover {
+            background: var(--hover-bg);
+            border-color: var(--accent-pink);
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #be9ddf;
+            animation: pulse 2s infinite;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-right: 2px solid var(--border-color);
+            padding: 20px 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-collapsed .sidebar {
+            padding: 20px 5px;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section-title {
+            color: var(--text-secondary);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-collapsed .nav-section-title {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .sidebar-collapsed .nav-item {
+            padding: 12px 10px;
+            justify-content: center;
+        }
+
+        .nav-item-icon {
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .nav-item-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-collapsed .nav-item-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-primary);
+            color: var(--accent-blue);
+            border-left-color: var(--accent-blue);
+        }
+
+        .nav-item.active {
+            background: var(--hover-bg);
+            color: var(--accent-blue);
+            border-left-color: var(--accent-blue);
+        }
+
+        .nav-item::before {
+            content: '>';
+            opacity: 0;
+            transition: opacity 0.3s;
+            position: absolute;
+            left: 5px;
+        }
+
+        .sidebar-collapsed .nav-item::before {
+            display: none;
+        }
+
+        .nav-item.active::before,
+        .nav-item:hover::before {
+            opacity: 1;
+        }
+
+        /* Tooltip for collapsed sidebar */
+        .nav-item-tooltip {
+            position: absolute;
+            left: 100%;
+            margin-left: 10px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-collapsed .nav-item:hover .nav-item-tooltip {
+            opacity: 1;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            background: var(--bg-primary);
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .breadcrumb span {
+            color: var(--accent-blue);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* Card Grid Layouts */
+        .card-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
+        }
+
+        body.light-mode .info-card:hover {
+            box-shadow: 0 4px 12px rgba(9, 105, 218, 0.15);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            color: var(--accent-blue);
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .card-icon {
+            font-size: 1.5em;
+        }
+
+        .card-content {
+            color: var(--text-primary);
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .card-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .card-stat:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent-blue);
+            transform: scale(1.05);
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .metric-change {
+            font-size: 0.8em;
+            color: var(--accent-purple);
+            margin-top: 5px;
+        }
+
+        /* Timeline Layout */
+        .timeline-container {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-date {
+            text-align: right;
+            color: var(--accent-pink);
+            font-weight: bold;
+            padding-top: 5px;
+        }
+
+        .timeline-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-blue);
+            padding: 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-left-color: var(--accent-purple);
+            background: var(--bg-tertiary);
+            transform: translateX(5px);
+        }
+
+        .timeline-title {
+            color: var(--accent-blue);
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .timeline-description {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Project Cards */
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 16px rgba(88, 166, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        body.light-mode .project-card:hover {
+            box-shadow: 0 8px 16px rgba(9, 105, 218, 0.2);
+        }
+
+        .project-header {
+            margin-bottom: 15px;
+        }
+
+        .project-title {
+            color: var(--accent-blue);
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .project-description {
+            color: var(--text-primary);
+            line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 15px;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: var(--bg-tertiary);
+            color: var(--accent-pink);
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-footer {
+            display: flex;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .project-link {
+            flex: 1;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--accent-blue);
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.85em;
+        }
+
+        .project-link:hover {
+            background: var(--hover-bg);
+            border-color: var(--accent-blue);
+        }
+
+        /* Progress Bars */
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .progress-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-name {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .progress-percent {
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 3px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressScan 2s linear infinite;
+        }
+
+        /* Interactive Puzzle */
+        .puzzle-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .puzzle-title {
+            color: var(--accent-blue);
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .puzzle-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .puzzle-cell {
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .puzzle-cell:hover {
+            background: var(--hover-bg);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .puzzle-cell.solved {
+            background: var(--hover-bg);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+        }
+
+        body.light-mode .puzzle-cell.solved {
+            box-shadow: 0 0 10px rgba(9, 105, 218, 0.3);
+        }
+
+        .puzzle-result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--bg-tertiary);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            max-width: 80%;
+        }
+
+        .chat-message.user {
+            background: var(--hover-bg);
+            border-left: 3px solid var(--accent-pink);
+            margin-left: auto;
+        }
+
+        .chat-message.ai {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .chat-input-container {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px 15px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .chat-send-btn {
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            color: var(--bg-primary);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+
+        @keyframes progressScan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .card-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card-grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .control-center {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid var(--border-color);
+                display: none;
+            }
+
+            .sidebar.mobile-open {
+                display: block;
+            }
+
+            .card-grid-2,
+            .card-grid-3,
+            .card-grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .timeline-date {
+                text-align: left;
+            }
+
+            .status-indicators {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="control-center" id="controlCenter">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo-section">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <div class="terminal-icon">$</div>
+                <h1 class="main-title">CONTROL_CENTER</h1>
+            </div>
+            <div class="top-bar-controls">
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <span class="status-dot"></span>
+                        <span>System Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Last Updated: 2h ago</span>
+                    </div>
+                    <div class="status-item">
+                        <span>Projects: 7</span>
+                    </div>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">☀</button>
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <div class="nav-item active" onclick="showSection('dashboard')">
+                    <span class="nav-item-icon">📊</span>
+                    <span class="nav-item-text">Dashboard</span>
+                    <span class="nav-item-tooltip">Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="showSection('overview')">
+                    <span class="nav-item-icon">👤</span>
+                    <span class="nav-item-text">Overview</span>
+                    <span class="nav-item-tooltip">Overview</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Career</div>
+                <div class="nav-item" onclick="showSection('timeline')">
+                    <span class="nav-item-icon">📅</span>
+                    <span class="nav-item-text">Timeline</span>
+                    <span class="nav-item-tooltip">Timeline</span>
+                </div>
+                <div class="nav-item" onclick="showSection('skills')">
+                    <span class="nav-item-icon">⚡</span>
+                    <span class="nav-item-text">Skills</span>
+                    <span class="nav-item-tooltip">Skills</span>
+                </div>
+                <div class="nav-item" onclick="showSection('certifications')">
+                    <span class="nav-item-icon">🎓</span>
+                    <span class="nav-item-text">Certifications</span>
+                    <span class="nav-item-tooltip">Certifications</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Portfolio</div>
+                <div class="nav-item" onclick="showSection('projects')">
+                    <span class="nav-item-icon">🚀</span>
+                    <span class="nav-item-text">Projects</span>
+                    <span class="nav-item-tooltip">Projects</span>
+                </div>
+                <div class="nav-item" onclick="showSection('security')">
+                    <span class="nav-item-icon">🔒</span>
+                    <span class="nav-item-text">Security Lab</span>
+                    <span class="nav-item-tooltip">Security Lab</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Personal</div>
+                <div class="nav-item" onclick="showSection('growth')">
+                    <span class="nav-item-icon">🌱</span>
+                    <span class="nav-item-text">Growth Hub</span>
+                    <span class="nav-item-tooltip">Growth Hub</span>
+                </div>
+                <div class="nav-item" onclick="showSection('ai-assistant')">
+                    <span class="nav-item-icon">🤖</span>
+                    <span class="nav-item-text">AI Assistant</span>
+                    <span class="nav-item-tooltip">AI Assistant</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section active">
+                <div class="breadcrumb">home / <span>dashboard</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Command Dashboard</h2>
+                    <p class="section-subtitle">Real-time system overview and metrics</p>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="card-grid-4">
+                    <div class="metric-card">
+                        <div class="metric-value">42</div>
+                        <div class="metric-label">Repositories</div>
+                        <div class="metric-change">+3 this month</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">1.2K</div>
+                        <div class="metric-label">Commits</div>
+                        <div class="metric-change">+127 this week</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">156</div>
+                        <div class="metric-label">Stars</div>
+                        <div class="metric-change">+12 this month</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">7</div>
+                        <div class="metric-label">Active Projects</div>
+                        <div class="metric-change">2 deploying</div>
+                    </div>
+                </div>
+
+                <!-- Info Cards Grid -->
+                <div class="card-grid-2">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">System Information</h3>
+                            <span class="card-icon">💻</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-stat">
+                                <span class="stat-label">Role:</span>
+                                <span class="stat-value">Full Stack Developer</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Specialization:</span>
+                                <span class="stat-value">Flutter & Security</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Experience:</span>
+                                <span class="stat-value">5+ years</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Status:</span>
+                                <span class="stat-value">Active Learning</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Current Focus</h3>
+                            <span class="card-icon">🎯</span>
+                        </div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 15px;">Building innovative solutions with Flutter for web and mobile platforms, while strengthening cloud security implementations.</p>
+                            <div class="card-stat">
+                                <span class="stat-label">Primary Stack:</span>
+                                <span class="stat-value">Flutter, Python, AWS</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Learning:</span>
+                                <span class="stat-value">Kubernetes, GraphQL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">GitHub Activity</h3>
+                            <span class="card-icon">📈</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-stat">
+                                <span class="stat-label">Last Push:</span>
+                                <span class="stat-value">2 hours ago</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Streak:</span>
+                                <span class="stat-value">47 days</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Pull Requests:</span>
+                                <span class="stat-value">89 merged</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Issues Closed:</span>
+                                <span class="stat-value">234</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Links</h3>
+                            <span class="card-icon">🔗</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-stat">
+                                <span class="stat-label">GitHub:</span>
+                                <span class="stat-value">@username</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">LinkedIn:</span>
+                                <span class="stat-value">/in/profile</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Email:</span>
+                                <span class="stat-value">dev@email.com</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-label">Portfolio:</span>
+                                <span class="stat-value">portfolio.dev</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview" class="content-section">
+                <div class="breadcrumb">home / <span>overview</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Professional Overview</h2>
+                    <p class="section-subtitle">Comprehensive profile and capabilities</p>
+                </div>
+
+                <div class="info-card" style="margin-bottom: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title">About Me</h3>
+                        <span class="card-icon">👨‍💻</span>
+                    </div>
+                    <div class="card-content">
+                        <p style="margin-bottom: 15px;">
+                            Passionate full-stack developer with expertise in Flutter, cybersecurity, and cloud technologies. 
+                            Committed to building scalable, secure applications that solve real-world problems.
+                        </p>
+                        <p>
+                            My journey combines technical excellence with creative problem-solving, focusing on user experience 
+                            and system security.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-grid-3">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Technical Skills</h3>
+                            <span class="card-icon">⚡</span>
+                        </div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">Frontend:</p>
+                            <p style="margin-bottom: 15px;">Flutter, React, TypeScript</p>
+                            
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">Backend:</p>
+                            <p style="margin-bottom: 15px;">Python, Node.js, FastAPI</p>
+                            
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">Cloud:</p>
+                            <p>AWS, Docker, Kubernetes</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Security</h3>
+                            <span class="card-icon">🔒</span>
+                        </div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">Tools:</p>
+                            <p style="margin-bottom: 15px;">Metasploit, Burp Suite, Nmap</p>
+                            
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">Focus Areas:</p>
+                            <p>Penetration Testing, Security Architecture</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tools</h3>
+                            <span class="card-icon">🛠️</span>
+                        </div>
+                        <div class="card-content">
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">Version Control:</p>
+                            <p style="margin-bottom: 15px;">Git, GitHub, GitLab</p>
+                            
+                            <p style="margin-bottom: 10px; color: var(--accent-pink); font-weight: bold;">CI/CD:</p>
+                            <p>Jenkins, GitHub Actions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Section -->
+            <div id="timeline" class="content-section">
+                <div class="breadcrumb">home / career / <span>timeline</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Career Timeline</h2>
+                    <p class="section-subtitle">Professional journey and milestones</p>
+                </div>
+
+                <div class="timeline-container">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024 - Present</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Senior Full Stack Developer</div>
+                            <div class="timeline-description">
+                                Leading Flutter and React development projects. Implementing cloud-native solutions with AWS and focusing on cybersecurity best practices. Mentoring junior developers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">AWS Solutions Architect Certification</div>
+                            <div class="timeline-description">
+                                Completed comprehensive cloud architecture training. Specialized in designing scalable, secure infrastructure for enterprise applications.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-date">2022 - 2023</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Flutter Specialist</div>
+                            <div class="timeline-description">
+                                Transitioned to mobile-first development. Built cross-platform applications with emphasis on performance and user experience.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021 - 2022</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Cybersecurity Bootcamp</div>
+                            <div class="timeline-description">
+                                Intensive training covering penetration testing, security architecture, and threat analysis with hands-on labs.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-date">2019 - 2021</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Computer Science Degree</div>
+                            <div class="timeline-description">
+                                Bachelor's with focus on software engineering, data structures, and system design. Capstone in machine learning.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills Section -->
+            <div id="skills" class="content-section">
+                <div class="breadcrumb">home / career / <span>skills</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Technical Skills</h2>
+                    <p class="section-subtitle">Proficiency levels and expertise areas</p>
+                </div>
+
+                <div class="card-grid-2">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Programming Languages</h3>
+                            <span class="card-icon">💻</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="progress-list">
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Python</span>
+                                        <span class="progress-percent">95%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Dart / Flutter</span>
+                                        <span class="progress-percent">92%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">JavaScript / TypeScript</span>
+                                        <span class="progress-percent">88%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 88%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Frameworks & Tools</h3>
+                            <span class="card-icon">🛠️</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="progress-list">
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">React / Next.js</span>
+                                        <span class="progress-percent">85%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">FastAPI / Django</span>
+                                        <span class="progress-percent">90%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Docker / Kubernetes</span>
+                                        <span class="progress-percent">78%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications Section -->
+            <div id="certifications" class="content-section">
+                <div class="breadcrumb">home / career / <span>certifications</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Certifications</h2>
+                    <p class="section-subtitle">Professional credentials and progress</p>
+                </div>
+
+                <div class="progress-list">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">AWS Solutions Architect Associate</span>
+                            <span class="progress-percent">85%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">CISSP (Certified Information Systems Security Professional)</span>
+                            <span class="progress-percent">62%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 62%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">Flutter Certified Developer</span>
+                            <span class="progress-percent">92%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 92%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">CEH (Certified Ethical Hacker)</span>
+                            <span class="progress-percent">78%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-name">CompTIA Security+</span>
+                            <span class="progress-percent">95%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div id="projects" class="content-section">
+                <div class="breadcrumb">home / portfolio / <span>projects</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Featured Projects</h2>
+                    <p class="section-subtitle">Showcase of recent work and contributions</p>
+                </div>
+
+                <div class="card-grid-2">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">FinTech Dashboard</div>
+                        </div>
+                        <div class="project-description">
+                            Comprehensive financial management platform built with Flutter and Firebase. Features real-time analytics, secure transactions, and AI-powered insights.
+                        </div>
+                        <div class="project-tags">
+                            <span class="tag">Flutter</span>
+                            <span class="tag">Firebase</span>
+                            <span class="tag">Python</span>
+                            <span class="tag">TensorFlow</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="project-link">Live Demo</a>
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Docs</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">Security Scanner</div>
+                        </div>
+                        <div class="project-description">
+                            Automated vulnerability scanner for web applications. Integrated with CI/CD pipelines for continuous security monitoring.
+                        </div>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Docker</span>
+                            <span class="tag">AWS</span>
+                            <span class="tag">Jenkins</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="project-link">Documentation</a>
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Deploy</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">Health Tracker App</div>
+                        </div>
+                        <div class="project-description">
+                            Cross-platform health and fitness tracking application with real-time sync, progress analytics, and social features.
+                        </div>
+                        <div class="project-tags">
+                            <span class="tag">Flutter</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">MongoDB</span>
+                            <span class="tag">Socket.io</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="project-link">App Store</a>
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">API Docs</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-title">AI Chatbot Platform</div>
+                        </div>
+                        <div class="project-description">
+                            Intelligent conversational AI with NLP, sentiment analysis, and multi-language support for various messaging platforms.
+                        </div>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">TensorFlow</span>
+                            <span class="tag">FastAPI</span>
+                            <span class="tag">Redis</span>
+                        </div>
+                        <div class="project-footer">
+                            <a href="#" class="project-link">Live Demo</a>
+                            <a href="#" class="project-link">GitHub</a>
+                            <a href="#" class="project-link">Docs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Lab Section -->
+            <div id="security" class="content-section">
+                <div class="breadcrumb">home / portfolio / <span>security lab</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Cybersecurity Zone</h2>
+                    <p class="section-subtitle">Security projects and challenges</p>
+                </div>
+
+                <div class="puzzle-container">
+                    <div class="puzzle-title">Binary Puzzle Challenge</div>
+                    <div class="puzzle-description">Click cells to reveal the hidden message: "SECURE"</div>
+                    <div class="puzzle-grid" id="puzzleGrid"></div>
+                    <div class="puzzle-result" id="puzzleResult"></div>
+                </div>
+            </div>
+
+            <!-- Growth Hub Section -->
+            <div id="growth" class="content-section">
+                <div class="breadcrumb">home / personal / <span>growth hub</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">Personal Growth</h2>
+                    <p class="section-subtitle">Fitness, learning, and personal development</p>
+                </div>
+
+                <div class="card-grid-2">
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Fitness Tracking</h3>
+                            <span class="card-icon">💪</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="progress-list">
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Weekly Exercise Goal</span>
+                                        <span class="progress-percent">75%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Daily Steps (10k goal)</span>
+                                        <span class="progress-percent">82%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 82%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Quran Study Progress</h3>
+                            <span class="card-icon">📖</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="progress-list">
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Daily Reading</span>
+                                        <span class="progress-percent">90%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-item">
+                                    <div class="progress-header">
+                                        <span class="progress-name">Memorization Progress</span>
+                                        <span class="progress-percent">65%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Assistant Section -->
+            <div id="ai-assistant" class="content-section">
+                <div class="breadcrumb">home / personal / <span>ai assistant</span></div>
+                
+                <div class="section-header">
+                    <h2 class="section-title">AI Portfolio Assistant</h2>
+                    <p class="section-subtitle">Ask me anything about my experience and skills</p>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-header">AI Assistant • Online</div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message ai">
+                            Hello! I'm your AI portfolio assistant. Feel free to ask me about skills, projects, experience, or anything else you'd like to know!
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your question...">
+                        <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀';
+        }
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const controlCenter = document.getElementById('controlCenter');
+            controlCenter.classList.toggle('sidebar-collapsed');
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav item
+            event.currentTarget.classList.add('active');
+        }
+
+        // Puzzle Game
+        const puzzleWords = ['S', 'E', 'C', 'U', 'R', 'E'];
+        let solvedCount = 0;
+
+        function initializePuzzle() {
+            const grid = document.getElementById('puzzleGrid');
+            if (!grid) return;
+            
+            for (let i = 0; i < 36; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                
+                if (i < 6) {
+                    cell.textContent = '?';
+                    cell.dataset.letter = puzzleWords[i];
+                    cell.dataset.index = i;
+                    cell.onclick = () => solvePuzzleCell(cell);
+                } else {
+                    cell.textContent = Math.floor(Math.random() * 2);
+                }
+                
+                grid.appendChild(cell);
+            }
+        }
+
+        function solvePuzzleCell(cell) {
+            if (cell.classList.contains('solved')) return;
+            
+            cell.textContent = cell.dataset.letter;
+            cell.classList.add('solved');
+            solvedCount++;
+            
+            if (solvedCount === 6) {
+                document.getElementById('puzzleResult').textContent = '✓ Puzzle Solved! You found: SECURE';
+            }
+        }
+
+        // Chat Functionality
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (!input.value.trim()) return;
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.textContent = input.value;
+            messagesContainer.appendChild(userMsg);
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'chat-message ai';
+                aiMsg.textContent = 'Thanks for your question! This is a demo response. In a full implementation, this would connect to an AI service trained on portfolio data.';
+                messagesContainer.appendChild(aiMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+            
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Enter key support for chat
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+            
+            // Initialize puzzle
+            initializePuzzle();
+        });
+    </script>
+</body>
+</html>
