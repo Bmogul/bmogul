@@ -7,6 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
+    final theme = Theme.of(context);
 
     var lastBuild = 3;
     var activeProjects = 4;
@@ -25,7 +26,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
         title: Row(
-          children: [Icon(Icons.terminal), const Text('Control_Center')],
+          children: [Icon(Icons.terminal), Text('Control_Center', style: theme.textTheme.titleLarge,)],
         ),
         actions: [
           Text('System Active'),
@@ -44,6 +45,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      body: Text("Hello", style: theme.textTheme.displayLarge),
     );
   }
 }
