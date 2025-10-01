@@ -12,8 +12,10 @@ class ThemeProvider extends ChangeNotifier {
     final ThemeData base = ThemeData.dark();
 
     return base.copyWith(
+      scaffoldBackgroundColor: kPortfolioDarkBg,
       colorScheme: base.colorScheme.copyWith(
         brightness: Brightness.dark,
+        background: kPortfolioDarkBg,
         primary: kPortfolioBlue,
         onPrimary: kPortfolioDarkBg,
         secondary: kPortfolioPurple,
@@ -26,6 +28,31 @@ class ThemeProvider extends ChangeNotifier {
         onSurface: kPortfolioDarkTextPrimary,
         surfaceContainerHighest: kPortfolioDarkBg3,
         outline: kPortfolioDarkBorder,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: kPortfolioDarkBg2,
+        foregroundColor: kPortfolioDarkTextPrimary,
+        titleTextStyle: TextStyle(
+          color: kPortfolioBlue,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        toolbarTextStyle: TextStyle(
+          color: kPortfolioDarkTextSecondary,
+          fontSize: 14,
+        ),
+        iconTheme: IconThemeData(color: kPortfolioBlue),
+        actionsIconTheme: IconThemeData(color: kPortfolioPink),
+      ),
+      listTileTheme: ListTileThemeData(
+        selectedTileColor: Colors.red, // Background when   selected
+        selectedColor: kPortfolioBlue, // Text and icon color whenselected
+        textColor: kPortfolioDarkTextSecondary, // Unselected textcolor
+        iconColor: kPortfolioDarkTextSecondary, // Unselected icon color
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        dense: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        style: ListTileStyle.drawer,
       ),
       textTheme: base.textTheme.copyWith(
         // Display text (largest)
@@ -100,8 +127,10 @@ class ThemeProvider extends ChangeNotifier {
     final ThemeData base = ThemeData.light();
 
     return base.copyWith(
+      scaffoldBackgroundColor: kPortfolioLightBg,
       colorScheme: base.colorScheme.copyWith(
         brightness: Brightness.light,
+        background: kPortfolioLightBg,
         primary: kPortfolioBlueLM,
         onPrimary: Colors.white,
         secondary: kPortfolioPurpleLM,
@@ -114,6 +143,31 @@ class ThemeProvider extends ChangeNotifier {
         onSurface: kPortfolioLightTextPrimary,
         surfaceContainerHighest: kPortfolioLightBg3,
         outline: kPortfolioLightBorder,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: kPortfolioLightBg2,
+        foregroundColor: kPortfolioLightTextPrimary,
+        titleTextStyle: TextStyle(
+          color: kPortfolioBlueLM,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        toolbarTextStyle: TextStyle(
+          color: kPortfolioLightTextSecondary,
+          fontSize: 14,
+        ),
+        iconTheme: IconThemeData(color: kPortfolioBlueLM),
+        actionsIconTheme: IconThemeData(color: kPortfolioPinkLM),
+      ),
+      listTileTheme: ListTileThemeData(
+        selectedTileColor: kPortfolioLightHover, // Background when   selected
+        selectedColor: kPortfolioBlueLM, // Text and icon color whenselected
+        textColor: kPortfolioLightTextSecondary, // Unselected textcolor
+        iconColor: kPortfolioLightTextSecondary, // Unselected icon color
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        dense: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        style: ListTileStyle.drawer,
       ),
       textTheme: base.textTheme.copyWith(
         // Display text (largest)
