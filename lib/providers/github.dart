@@ -14,8 +14,8 @@ class GitHubProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  String get _token => dotenv.env['GITHUB_API_KEY'] ?? '';
-  String get _username => dotenv.env['GITHUB_USERNAME'] ?? '';
+  String get _token => dotenv.env['API_GH_KEY'] ?? '';
+  String get _username => dotenv.env['USERNAME_GH'] ?? '';
 
   Map<String, String> get _headers => {
     'Authorization': 'Bearer $_token',
