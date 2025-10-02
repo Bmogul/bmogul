@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bmogul/colors.dart';
+import 'package:bmogul/providers/github.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,8 +18,19 @@ class _HomePageState extends State<HomePage> {
   var selectedIndex = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GitHubProvider>().loadGitHubData();
+      context.read<GitHubProvider>().loadRepositories();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
+    final githubProvider = context.watch<GitHubProvider>();
     final theme = Theme.of(context);
 
     var lastBuild = 3;
@@ -132,11 +143,23 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                child: Text(
-                  "Hello",
-                  style: theme.textTheme.titleLarge!.copyWith(
-                    color: theme.colorScheme.primary,
-                  ),
+                child: Column(
+                  children: [
+                    Text(
+                      "Hello",
+                      style: theme.textTheme.titleLarge!.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          Text(githubProvider.userData.toString()),
+                          Text(githubProvider.repos.toString()),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
