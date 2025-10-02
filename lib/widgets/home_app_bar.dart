@@ -8,12 +8,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.activeProjects,
     required this.themeProvider,
     this.expanded = true,
+    required this.onMenuToggle,
   });
 
   final int lastBuild;
   final int activeProjects;
   final ThemeProvider themeProvider;
   final bool expanded;
+  final VoidCallback onMenuToggle;
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
@@ -29,6 +31,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
             onPressed: () {
               print('Menu');
+              onMenuToggle();
             },
             icon: Icon(Icons.menu),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bmogul/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ThemeProvider extends ChangeNotifier {
   bool _isLight = false;
@@ -10,6 +11,7 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData _buildDarkTheme() {
     final ThemeData base = ThemeData.dark();
+    final textTheme = GoogleFonts.ubuntuMonoTextTheme(base.textTheme);
 
     return base.copyWith(
       scaffoldBackgroundColor: kPortfolioDarkBg,
@@ -18,9 +20,9 @@ class ThemeProvider extends ChangeNotifier {
         background: kPortfolioDarkBg,
         primary: kPortfolioBlue,
         onPrimary: kPortfolioDarkBg,
-        secondary: kPortfolioPurple,
+        secondary: kPortfolioGreen,
         onSecondary: kPortfolioDarkBg,
-        tertiary: kPortfolioPink,
+        tertiary: kPortfolioPurple,
         onTertiary: kPortfolioDarkBg,
         error: kPortfolioError,
         onError: Colors.white,
@@ -32,12 +34,12 @@ class ThemeProvider extends ChangeNotifier {
       appBarTheme: AppBarTheme(
         backgroundColor: kPortfolioDarkBg2,
         foregroundColor: kPortfolioDarkTextPrimary,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.ubuntuMono(
           color: kPortfolioBlue,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        toolbarTextStyle: TextStyle(
+        toolbarTextStyle: GoogleFonts.ubuntuMono(
           color: kPortfolioDarkTextSecondary,
           fontSize: 14,
         ),
@@ -54,69 +56,69 @@ class ThemeProvider extends ChangeNotifier {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         style: ListTileStyle.drawer,
       ),
-      textTheme: base.textTheme.copyWith(
+      textTheme: textTheme.copyWith(
         // Display text (largest)
-        displayLarge: base.textTheme.displayLarge?.copyWith(
+        displayLarge: textTheme.displayLarge?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.bold,
         ),
-        displayMedium: base.textTheme.displayMedium?.copyWith(
+        displayMedium: textTheme.displayMedium?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.bold,
         ),
-        displaySmall: base.textTheme.displaySmall?.copyWith(
+        displaySmall: textTheme.displaySmall?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.w600,
         ),
 
         // Headlines
-        headlineLarge: base.textTheme.headlineLarge?.copyWith(
+        headlineLarge: textTheme.headlineLarge?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.bold,
         ),
-        headlineMedium: base.textTheme.headlineMedium?.copyWith(
+        headlineMedium: textTheme.headlineMedium?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.w600,
         ),
-        headlineSmall: base.textTheme.headlineSmall?.copyWith(
+        headlineSmall: textTheme.headlineSmall?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.w600,
         ),
 
         // Titles
-        titleLarge: base.textTheme.titleLarge?.copyWith(
+        titleLarge: textTheme.titleLarge?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.w600,
         ),
-        titleMedium: base.textTheme.titleMedium?.copyWith(
+        titleMedium: textTheme.titleMedium?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.w500,
         ),
-        titleSmall: base.textTheme.titleSmall?.copyWith(
+        titleSmall: textTheme.titleSmall?.copyWith(
           color: kPortfolioDarkTextSecondary,
           fontWeight: FontWeight.w500,
         ),
 
         // Body text
-        bodyLarge: base.textTheme.bodyLarge?.copyWith(
+        bodyLarge: textTheme.bodyLarge?.copyWith(
           color: kPortfolioDarkTextPrimary,
         ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(
+        bodyMedium: textTheme.bodyMedium?.copyWith(
           color: kPortfolioDarkTextPrimary,
         ),
-        bodySmall: base.textTheme.bodySmall?.copyWith(
+        bodySmall: textTheme.bodySmall?.copyWith(
           color: kPortfolioDarkTextSecondary,
         ),
 
         // Labels
-        labelLarge: base.textTheme.labelLarge?.copyWith(
+        labelLarge: textTheme.labelLarge?.copyWith(
           color: kPortfolioDarkTextPrimary,
           fontWeight: FontWeight.w500,
         ),
-        labelMedium: base.textTheme.labelMedium?.copyWith(
+        labelMedium: textTheme.labelMedium?.copyWith(
           color: kPortfolioDarkTextSecondary,
         ),
-        labelSmall: base.textTheme.labelSmall?.copyWith(
+        labelSmall: textTheme.labelSmall?.copyWith(
           color: kPortfolioDarkTextSecondary,
         ),
       ),
@@ -125,6 +127,7 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData _buildLightTheme() {
     final ThemeData base = ThemeData.light();
+    final textTheme = GoogleFonts.ubuntuMonoTextTheme(base.textTheme);
 
     return base.copyWith(
       scaffoldBackgroundColor: kPortfolioLightBg,
@@ -133,9 +136,9 @@ class ThemeProvider extends ChangeNotifier {
         background: kPortfolioLightBg,
         primary: kPortfolioBlueLM,
         onPrimary: Colors.white,
-        secondary: kPortfolioPurpleLM,
+        secondary: kPortfolioGreen,
         onSecondary: Colors.white,
-        tertiary: kPortfolioPinkLM,
+        tertiary: kPortfolioPurpleLM,
         onTertiary: Colors.white,
         error: kPortfolioError,
         onError: Colors.white,
@@ -147,12 +150,12 @@ class ThemeProvider extends ChangeNotifier {
       appBarTheme: AppBarTheme(
         backgroundColor: kPortfolioLightBg2,
         foregroundColor: kPortfolioLightTextPrimary,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.ubuntuMono(
           color: kPortfolioBlueLM,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        toolbarTextStyle: TextStyle(
+        toolbarTextStyle: GoogleFonts.ubuntuMono(
           color: kPortfolioLightTextSecondary,
           fontSize: 14,
         ),
@@ -169,69 +172,69 @@ class ThemeProvider extends ChangeNotifier {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         style: ListTileStyle.drawer,
       ),
-      textTheme: base.textTheme.copyWith(
+      textTheme: textTheme.copyWith(
         // Display text (largest)
-        displayLarge: base.textTheme.displayLarge?.copyWith(
+        displayLarge: textTheme.displayLarge?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.bold,
         ),
-        displayMedium: base.textTheme.displayMedium?.copyWith(
+        displayMedium: textTheme.displayMedium?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.bold,
         ),
-        displaySmall: base.textTheme.displaySmall?.copyWith(
+        displaySmall: textTheme.displaySmall?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.w600,
         ),
 
         // Headlines
-        headlineLarge: base.textTheme.headlineLarge?.copyWith(
+        headlineLarge: textTheme.headlineLarge?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.bold,
         ),
-        headlineMedium: base.textTheme.headlineMedium?.copyWith(
+        headlineMedium: textTheme.headlineMedium?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.w600,
         ),
-        headlineSmall: base.textTheme.headlineSmall?.copyWith(
+        headlineSmall: textTheme.headlineSmall?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.w600,
         ),
 
         // Titles
-        titleLarge: base.textTheme.titleLarge?.copyWith(
+        titleLarge: textTheme.titleLarge?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.w600,
         ),
-        titleMedium: base.textTheme.titleMedium?.copyWith(
+        titleMedium: textTheme.titleMedium?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.w500,
         ),
-        titleSmall: base.textTheme.titleSmall?.copyWith(
+        titleSmall: textTheme.titleSmall?.copyWith(
           color: kPortfolioLightTextSecondary,
           fontWeight: FontWeight.w500,
         ),
 
         // Body text
-        bodyLarge: base.textTheme.bodyLarge?.copyWith(
+        bodyLarge: textTheme.bodyLarge?.copyWith(
           color: kPortfolioLightTextPrimary,
         ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(
+        bodyMedium: textTheme.bodyMedium?.copyWith(
           color: kPortfolioLightTextPrimary,
         ),
-        bodySmall: base.textTheme.bodySmall?.copyWith(
+        bodySmall: textTheme.bodySmall?.copyWith(
           color: kPortfolioLightTextSecondary,
         ),
 
         // Labels
-        labelLarge: base.textTheme.labelLarge?.copyWith(
+        labelLarge: textTheme.labelLarge?.copyWith(
           color: kPortfolioLightTextPrimary,
           fontWeight: FontWeight.w500,
         ),
-        labelMedium: base.textTheme.labelMedium?.copyWith(
+        labelMedium: textTheme.labelMedium?.copyWith(
           color: kPortfolioLightTextSecondary,
         ),
-        labelSmall: base.textTheme.labelSmall?.copyWith(
+        labelSmall: textTheme.labelSmall?.copyWith(
           color: kPortfolioLightTextSecondary,
         ),
       ),
