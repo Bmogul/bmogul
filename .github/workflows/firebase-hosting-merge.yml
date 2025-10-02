@@ -47,11 +47,12 @@ jobs:
       # 6️⃣ Install dependencies
       - run: flutter pub get
 
-      # 7️⃣ Create .env from GitHub secrets
-      - name: Create .env file
-        run: |
-          echo "API_GH_KEY=${{ secrets.API_GH_KEY }}" >> .env
-          echo "USERNAME_GH=${{ secrets.USERNAME_GH }}" >> .env
+
+      - name: Add env values
+      - run: flutter build web --release \
+        --dart-define=API_GH_KEY=${{ secrets.API_GH_KEY }} \
+        --dart-define=USERNAME_GH=${{ secrets.USERNAME_GH }}
+
 
       # 8️⃣ Build Flutter web
       - run: flutter build web --release
