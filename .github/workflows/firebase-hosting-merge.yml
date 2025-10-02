@@ -15,7 +15,7 @@ jobs:
       # Setup Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0" # or your Flutter version
+          flutter-version: "3.35.5" # or your Flutter version
 
       # Enable web
       - run: flutter config --enable-web
