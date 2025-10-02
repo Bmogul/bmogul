@@ -27,7 +27,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "API_GH_KEY=${{ secrets.API_GH_KEY }}" >> .env
-          echo "USERNAME_GH=${{ secrets.USERNAME_GH}}" >> .env
+          echo "USERNAME_GH=${{ secrets.USERNAME_GH }}" >> .env
 
       # Build Flutter web app
       - run: flutter build web --release
