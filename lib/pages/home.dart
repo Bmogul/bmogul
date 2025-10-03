@@ -105,7 +105,10 @@ class _HomePageState extends State<HomePage> {
               expanded: constraints.maxWidth >= 650,
               onMenuToggle: () => setState(() => hiddenMenu = !hiddenMenu),
             ),
-            body: Row(
+            body: Builder(
+              builder: (scaffoldContext) {
+                _showConstructionBanner(scaffoldContext);
+                return Row(
               children: [
                 AnimatedContainer(
                   duration: Duration(milliseconds: 300),
@@ -162,6 +165,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ],
+            );
+              },
             ),
           ),
         );
